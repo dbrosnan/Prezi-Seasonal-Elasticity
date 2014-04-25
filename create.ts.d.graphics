@@ -1,1 +1,170 @@
-#Graphics
+#Loading Libraries To Help With The Analysis
+library("reshape2") #Brought in For MELT Functionality
+library("ggplot2") #Brought in For Graphics Functionality
+library("plyr")
+library("scales")
+
+
+
+
+#PLOTS FOR DEBUG
+  plot.ts(web_powerpoint_prezi.powerpoint.ts) # Plot TS To Check For Errors  
+  plot(web_powerpoint_prezi.powerpoint.ts.d) # Plot TS Decomposition To Check For Errors  
+  plot(web_powerpoint_prezi.powerpoint.ts.d$trend) # Plot TS Decomposition To Check For Errors  
+  plot(web_powerpoint_prezi.powerpoint.ts.d$seasonal) # Plot TS Decomposition To Check For Errors  
+  plot(web_powerpoint_prezi.powerpoint.ts.d$random) # Plot TS Decomposition To Check For Errors  
+
+#Take The POWERPOINT TS Decomposition Components Into Lists For Melting Into a Data Frame Vector.
+  web_powerpoint_prezi.powerpoint.ts.decomp.trend <- web_powerpoint_prezi.powerpoint.ts.d$trend
+  web_powerpoint_prezi.powerpoint.ts.decomp.seaso <- web_powerpoint_prezi.powerpoint.ts.d$seasonal
+  web_powerpoint_prezi.powerpoint.ts.decomp.rando <- web_powerpoint_prezi.powerpoint.ts.d$random
+
+#Take The PREZI TS Decomposition Components Into Lists For Melting Into a Data Frame Vector.
+  web_powerpoint_prezi.prezi.ts.decomp.trend <- web_powerpoint_prezi.prezi.ts.d$trend
+  web_powerpoint_prezi.prezi.ts.decomp.seaso <- web_powerpoint_prezi.prezi.ts.d$seasonal
+  web_powerpoint_prezi.prezi.ts.decomp.rando <- web_powerpoint_prezi.prezi.ts.d$random
+
+
+#Normalize Seasonality
+x <- web_powerpoint_prezi.prezi.ts.decomp.seaso
+web_powerpoint_prezi.prezi.ts.decomp.seaso.norm <- (x-min(x))/(max(x)-min(x))
+x <- web_powerpoint_prezi.powerpoint.ts.decomp.seaso
+web_powerpoint_prezi.powerpoint.ts.decomp.seaso.norm <- (x-min(x))/(max(x)-min(x))
+  
+
+#Seasonal, Trend, and Random Component Lists. Add week.freq, year.freq to Data Frame Vector
+  web_powerpoint_prezi.a1.seaso <- data.frame(trends$UID, web_powerpoint_prezi.prezi.ts.decomp.seaso.norm, web_powerpoint_prezi.powerpoint.ts.decomp.seaso.norm)
+  web_powerpoint_prezi.a1.trend <- data.frame(trends$UID, web_powerpoint_prezi.prezi.ts.decomp.trend, web_powerpoint_prezi.powerpoint.ts.decomp.trend)
+  web_powerpoint_prezi.a1.rando <- data.frame(trends$UID, web_powerpoint_prezi.prezi.ts.decomp.rando, web_powerpoint_prezi.powerpoint.ts.decomp.rando)
+
+
+#rename subset rows for ease of visualization
+web_powerpoint_prezi.a1.seaso <- rename(web_powerpoint_prezi.a1.seaso, c("web_powerpoint_prezi.prezi.ts.decomp.seaso.norm"="Prezi Normalized Seasonality", "web_powerpoint_prezi.powerpoint.ts.decomp.seaso.norm"="Powerpoint Normalized Seasonality"))
+
+
+#Melt data frames by year & week
+  web_powerpoint_prezi.a1.seaso.melt <- melt(web_powerpoint_prezi.a1.seaso, id=c("trends.UID"))
+  web_powerpoint_prezi.a1.trend.melt <- melt(web_powerpoint_prezi.a1.trend, id=c("trends.UID"))
+  web_powerpoint_prezi.a1.rando.melt <- melt(web_powerpoint_prezi.a1.rando, id=c("trends.UID"))
+
+################################
+#Plot Decomposed Data To Explore
+################################
+
+
+
+
+##POWERPOINT WEb Demand TREND VS PREZI 
+
+  ggplot(web_powerpoint_prezi.a1.seaso.melt, aes(x=trends.UID, y=value, color=variable)) +
+  geom_line(linetyoe="dashed") +
+  geom_point(shape=22, size=3, fill="white") +
+  scale_y_continuous(labels = percent_format())
+
+##############
+#A1: Expand Data Set From 5 Years to a Decade to get a better read on seasonality
+#Comparing the Powerpoint Query to the Prezi Query
+##############
+
+##TEST 2 A1 visual
+
+
+#visual 520 observations of seasonality
+ggplot(web_powerpoint_prezi.a1.seaso.melt, aes(x=trends.UID, y=value, color=variable)) +
+  geom_line(linetyoe="dashed") +
+  geom_point(shape=22, size=3, fill="white") +
+  scale_y_continuous(labels = percent_format())
+
+
+
+# using subset function 
+web_powerpoint_prezi.a1.seaso.melt.sub <- subset(web_powerpoint_prezi.a1.seaso.melt,  trends.UID < 53, select=c(trends.UID, variable, value))
+
+
+
+
+
+
+
+
+
+
+
+####JUST Split by Prezi and PP SEASONALITY NORMALIZED 52
+ggplot(web_powerpoint_prezi.a1.seaso.melt.sub, aes(x=trends.UID,y=value, color=variable)) +
+  geom_line(linetyoe="dashed") +
+  geom_point(shape=22, size=3, fill="white") +
+  scale_y_continuous(labels = percent_format()) +
+  ggtitle("Prezi Query Demand Vs. Powerpoint Query Demand") +
+  ylab(c("Seasonal Demand Component")) +
+  xlab(c("Weeks of The Year")) +
+  scale_fill_manual(values=c("#999999", "#444444", "#111111")) +
+  theme(plot.title = element_text(size = rel(2))) +
+  guides(fill=guide_legend(title="Legend")) +
+  theme(legend.justification=c(1,0), legend.position=c(.45,.15)) +
+  theme(plot.title = element_text(vjust=2)) +
+  theme(axis.text.x = element_text(size = rel(1.75), colour = '#444444', angle = 0, hjust = .5, vjust = -1)) +
+  theme(axis.text.y = element_text(size = rel(1.75), colour = '#444444', angle = 0, hjust = 0, vjust = .33)) + 
+  theme(axis.title.y = element_text(size = rel(1.5), angle = 90, hjust = .25, vjust = .35)) +
+  theme(axis.title.x = element_text(size = rel(1.5), angle = 00, hjust = .5, vjust = -.25)) +
+  scale_colour_discrete(name = "Holt Winters - Normalized Additive Decomposition") +
+  theme(legend.title = element_text(size = rel(1.25))) +
+  facet_wrap( ~variable, nrow=2)
+
+
+
+
+
+
+#visual subset 52 observations of seasonality
+ggplot(web_powerpoint_prezi.a1.seaso.melt.sub, aes(x=trends.UID,y=value, color=variable)) +
+  geom_line(linetyoe="dashed") +
+  geom_point(shape=22, size=3, fill="white") +
+  scale_y_continuous(labels = percent_format()) +
+  ggtitle("Prezi Query Demand Vs. Powerpoint Query Demand") +
+  ylab(c("Seasonal Demand Component")) +
+  xlab(c("Weeks of The Year")) +
+  scale_fill_manual(values=c("#999999", "#444444", "#111111")) +
+  theme(plot.title = element_text(size = rel(2))) +
+  guides(fill=guide_legend(title="Legend")) +
+  theme(legend.justification=c(1,0), legend.position=c(.45,.15)) +
+  theme(plot.title = element_text(vjust=2)) +
+  theme(axis.text.x = element_text(size = rel(1.75), colour = '#444444', angle = 0, hjust = .5, vjust = -1)) +
+  theme(axis.text.y = element_text(size = rel(1.75), colour = '#444444', angle = 0, hjust = 0, vjust = .33)) + 
+  theme(axis.title.y = element_text(size = rel(1.5), angle = 90, hjust = .25, vjust = .35)) +
+  theme(axis.title.x = element_text(size = rel(1.5), angle = 00, hjust = .5, vjust = -.25)) +
+  scale_colour_discrete(name = "Holt Winters - Normalized Additive Decomposition") +
+  theme(legend.title = element_text(size = rel(1.25)))
+
+#END OF A1
+
+
+
+
+
+
+#############################
+##EXAMPLE SETTINGS FOR GGPLOT
+#############################
+
+
+#Set ggplot theme and size
+theme_set(theme_gray(base_size = 31))
+#execute ggplot
+ggplot(data=zales.fig1b, aes(y=Imp.Share, x=Year, fill=Year)) + 
+  geom_bar(stat="identity", position=position_dodge(), colour="black")+
+  facet_wrap( ~Channel, ncol=2) + theme(legend.position="right") + 
+  ggtitle("Holiday Impression Share YoY") +
+  ylab(c("Avg. Impression Share TY vs. LY")) +
+  xlab(c("Date Range 11/1 - 12/31")) +
+  scale_fill_manual(values=c("#999999", "#444444", "#111111")) +
+  theme(plot.title = element_text(size = rel(1.1))) +
+  scale_y_continuous(labels = percent) +
+  guides(fill=guide_legend(title="Legend")) +
+  theme(legend.justification=c(1,0), legend.position=c(.2,.7)) +
+  theme(plot.title = element_text(vjust=2)) +
+  theme(axis.text.x = element_text(size = rel(.75), colour = '#444444', angle = 0, hjust = .5, vjust = -1)) +
+  theme(axis.text.y = element_text(size = rel(.75), colour = '#444444', angle = 0, hjust = 0, vjust = .33)) + 
+  theme(axis.title.y = element_text(size = rel(.9), angle = 90, hjust = .25, vjust = .35)) +
+  theme(axis.title.x = element_text(size = rel(.9), angle = 00, hjust = .5, vjust = -.25))
+
