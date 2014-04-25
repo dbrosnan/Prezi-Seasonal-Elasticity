@@ -1,0 +1,4 @@
+
+webtrends <-redshift.query(conn, "select * from webtrends;") # Download Google Web Trends Table
+compintel <-redshift.query(conn, "select * from compintel;") # Download SEM Competitive Intelligence Table
+ppctrends <-redshift.query(conn, "select * from ppctrends;") # Download SEM Keyword Research Table
