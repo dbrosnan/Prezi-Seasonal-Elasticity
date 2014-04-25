@@ -12,4 +12,4 @@ redshift.query(conn, "create table compintel(term varchar(100), avgweightedrank 
 #Copy S3 Storage CSV Data To Redshift
 redshift.query(conn, "copy webtrends from 's3://prezi-seasonality/webtrends.csv' CREDENTIALS 'aws_access_key_id=xxx;aws_secret_access_key=xxx' delimiter ',' CSV;")
 redshift.query(conn, "copy compintel from 's3://prezi-seasonality/compintel.csv' CREDENTIALS 'aws_access_key_id=xxx;aws_secret_access_key=xxx' delimiter ',' CSV;")
-redshift.query(conn, "copy trends from 's3://prezi-seasonality/trends.csv' CREDENTIALS 'aws_access_key_id=AKIAJIIA4MDONFCNXORQ;aws_secret_access_key=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' delimiter ',' CSV;")
+redshift.query(conn, "copy trends from 's3://prezi-seasonality/trends.csv' CREDENTIALS 'aws_access_key_id=xxx;aws_secret_access_key=xxx' delimiter ',' CSV;")
