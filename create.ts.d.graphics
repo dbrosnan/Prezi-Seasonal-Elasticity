@@ -1,3 +1,9 @@
+require(RJDBC) # Require JDBC Driver
+require(redshift) #Require Redshift Toolset 
+
+conn <- redshift.connect("jdbc:postgresql://prezi-research-instance.cjmsinetuw4e.us-west-2.redshift.amazonaws.com:5439/preziseasonaldb?tcpKeepAlive=true", "xxx", "xxx") # Create Redshift jdbc
+
+
 #Loading Libraries To Help With The Analysis
 library("reshape2") #Brought in For MELT Functionality
 library("ggplot2") #Brought in For Graphics Functionality
@@ -139,32 +145,4 @@ ggplot(web_powerpoint_prezi.a1.seaso.melt.sub, aes(x=trends.UID,y=value, color=v
 #END OF A1
 
 
-
-
-
-
-#############################
-##EXAMPLE SETTINGS FOR GGPLOT
-#############################
-
-
-#Set ggplot theme and size
-theme_set(theme_gray(base_size = 31))
-#execute ggplot
-ggplot(data=zales.fig1b, aes(y=Imp.Share, x=Year, fill=Year)) + 
-  geom_bar(stat="identity", position=position_dodge(), colour="black")+
-  facet_wrap( ~Channel, ncol=2) + theme(legend.position="right") + 
-  ggtitle("Holiday Impression Share YoY") +
-  ylab(c("Avg. Impression Share TY vs. LY")) +
-  xlab(c("Date Range 11/1 - 12/31")) +
-  scale_fill_manual(values=c("#999999", "#444444", "#111111")) +
-  theme(plot.title = element_text(size = rel(1.1))) +
-  scale_y_continuous(labels = percent) +
-  guides(fill=guide_legend(title="Legend")) +
-  theme(legend.justification=c(1,0), legend.position=c(.2,.7)) +
-  theme(plot.title = element_text(vjust=2)) +
-  theme(axis.text.x = element_text(size = rel(.75), colour = '#444444', angle = 0, hjust = .5, vjust = -1)) +
-  theme(axis.text.y = element_text(size = rel(.75), colour = '#444444', angle = 0, hjust = 0, vjust = .33)) + 
-  theme(axis.title.y = element_text(size = rel(.9), angle = 90, hjust = .25, vjust = .35)) +
-  theme(axis.title.x = element_text(size = rel(.9), angle = 00, hjust = .5, vjust = -.25))
 
