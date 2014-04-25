@@ -1,1 +1,8 @@
-#Seasonal Decompose
+#create trends
+
+#Create Time Series Objects
+webTrend.prezi.ts <- ts(trends$web_prezi.prezi, frequency=52, start=c(2004,1)) 
+webTrend.power.ts <- ts(trends$web_powerpoint.powerpoint, frequency=52, start=c(2004,1)) 
+#Holt Winters Decomposition to Seperate Season, Trend, and Irregular Components
+webTrend.prezi.ts.d <- decompose(webTrend.prezi.ts) 
+webTrend.power.ts.d <- decompose(webTrend.power.ts)
