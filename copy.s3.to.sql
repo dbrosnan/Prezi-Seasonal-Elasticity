@@ -1,1 +1,8 @@
-#copy.s3.to.sql#
+require(RJDBC) # Require JDBC Driver
+require(redshift) #Require Redshift Toolset 
+
+conn <- redshift.connect("jdbc:postgresql://prezi-research-instance.cjmsinetuw4e.us-west-2.redshift.amazonaws.com:5439/preziseasonaldb?tcpKeepAlive=true", "xxx", "xxx") # Create Redshift jdbc
+
+webtrends <-redshift.query(conn, "select * from webtrends;") # Download Google Web Trends Table
+compintel <-redshift.query(conn, "select * from compintel;") # Download SEM Competitive Intelligence Table
+ppctrends <-redshift.query(conn, "select * from ppctrends;") # Download SEM Keyword Research Table
